@@ -32,7 +32,7 @@ https://reactnative.cn/docs/signed-apk-android/
 
 **注意**: android/app/build.gradle 这个文件的修改.
 
-```json
+```js
 release {
   // Caution! In production, you need to generate your own keystore file.
   // see https://facebook.github.io/react-native/docs/signed-apk-android.
