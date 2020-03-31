@@ -69,8 +69,7 @@ export default class HelloWorldApp extends Component {
     this.ws = null;
 
     this.state = {
-      token: '',
-      roomID: '',
+      url: '',
       message: '',
       logs: '',
       connectBtnDisabled: true,
@@ -92,21 +91,13 @@ export default class HelloWorldApp extends Component {
   }
 
   componentDidMount() {
-    this.getData('wsToken').then(result => {
-      if (result) this.inputChangeHandle(result, 'Token');
-    });
-
-    this.getData('wsRoomID').then(result => {
-      if (result) this.inputChangeHandle(result, 'RoomID');
+    this.getData('wsUrl').then(result => {
+      if (result) this.inputChangeHandle(result, 'URL');
     });
   }
 
   buttonsStatus() {
-    if (
-      this.state.disconnectBtnDisabled &&
-      this.state.token &&
-      this.state.roomID
-    ) {
+    if (this.state.disconnectBtnDisabled && this.state.url) {
       this.setState({connectBtnDisabled: false});
     } else {
       this.setState({connectBtnDisabled: true});
@@ -114,20 +105,15 @@ export default class HelloWorldApp extends Component {
   }
 
   inputChangeHandle(value, label) {
-    if (label.includes('Token')) {
-      this.setState({token: value}, () => {
-        this.buttonsStatus();
-        this.setData('wsToken', this.state.token);
-      });
-    } else if (label.includes('RoomID')) {
-      this.setState({roomID: value}, () => {
-        this.buttonsStatus();
-        this.setData('wsRoomID', this.state.roomID);
-      });
-    } else if (label.includes('Message')) {
+    if (label.includes('Message')) {
       this.setState({
         message: value,
         sendBtnDisabled: !(value && !this.state.disconnectBtnDisabled),
+      });
+    } else if (label.includes('URL')) {
+      this.setState({url: value}, () => {
+        this.buttonsStatus();
+        this.setData('wsUrl', this.state.url);
       });
     }
   }
@@ -166,9 +152,7 @@ export default class HelloWorldApp extends Component {
     this.setState({
       connectIsLoading: true,
     });
-    this.ws = new WebSocket(
-      `wss://connect.websocket.in/v2/${this.state.roomID}?token=${this.state.token}`,
-    );
+    this.ws = new WebSocket(this.state.url);
     this.socketHandle();
   }
 
@@ -216,15 +200,9 @@ export default class HelloWorldApp extends Component {
         </View>
         <View>
           <CommonInput
-            label="Token:"
-            placeholder="Input token code"
-            value={this.state.token}
-            onInputChange={this.inputChangeHandle}></CommonInput>
-          <CommonInput
-            label="RoomID:"
-            placeholder="(1-1000)"
-            keyboardType="number-pad"
-            value={this.state.roomID}
+            label="URL:"
+            placeholder="wss://connect.websocket.in/v3/CHANNEL_ID?apiKey=API_KEY"
+            value={this.state.url}
             onInputChange={this.inputChangeHandle}></CommonInput>
         </View>
         <View style={styles.buttonsContainer}>
